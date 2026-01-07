@@ -18,8 +18,14 @@ void depiler(ElementPile **sommet) {
 }
 
 void afficherPile(ElementPile *sommet) {
+    printf("\n**********************************************************************************************************\n");
+    printf("\n                     HISTORIQUE                                                                           \n");
+    printf("\n**********************************************************************************************************\n");
+
+    // int i= 1;
     while (sommet != NULL) {
         printf("Historique : %s\n", sommet->support.titre);
         sommet = sommet->suivant;
+        
     }
 }

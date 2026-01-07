@@ -22,14 +22,18 @@ int main() {
     empiler(&historique, s2);
     enfiler(&notifications, "Support Langage C ajoute");
 
-    printf("\n--- LISTE DES SUPPORTS ---\n");
+    // printf("\n---\t\t\t  LISTE DES SUPPORTS ---\n");
     afficherSupports(liste);
 
-    printf("\n--- HISTORIQUE ---\n");
+    // printf("\n---\t\t\t  HISTORIQUE ---\n");
     afficherPile(historique);
 
-    printf("\n--- NOTIFICATIONS ---\n");
+    // printf("\n--- \t\t\t NOTIFICATIONS ---\n");
     afficherFile(notifications);
 
     return 0;
 }
+
+// executable
+// gcc src/main.c src/list.c src/pile.c src/file.c -Iinclude -o test_algo
+// ./test_algo

@@ -39,11 +39,18 @@ Element* chercherSupport(Element *tete, int id) {
 }
 
 void afficherSupports(Element *tete) {
+    printf("\n**********************************************************************************************************\n");
+    printf("\n                     LIste des supports                                                                   \n");
+    printf("\n**********************************************************************************************************\n");
+
+
     while (tete != NULL) {
-        printf("ID: %d | %s | %s\n",
-               tete->support.id,
-               tete->support.titre,
-               tete->support.module);
+        printf("ID: %d\n",tete->support.id);
+        printf("Titre: %s\n",tete->support.titre);
+        printf("Module: %s\n",tete->support.module);
+        printf("Type: %s\n",tete->support.type);
+        printf("Enseignant: %s\n",tete->support.enseignant);
+        printf("********************************************************************************************************\n");      
         tete = tete->suivant;
     }
 }

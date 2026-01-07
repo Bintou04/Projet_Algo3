@@ -30,6 +30,10 @@ void defiler(File *f) {
 }
 
 void afficherFile(File f) {
+    printf("\n**********************************************************************************************************\n");
+    printf("\n                     NOTIFICATION                                                                         \n");
+    printf("\n**********************************************************************************************************\n");
+
     while (f.debut != NULL) {
         printf("Notification : %s\n", f.debut->message);
         f.debut = f.debut->suivant;
