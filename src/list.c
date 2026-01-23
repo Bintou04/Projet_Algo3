@@ -29,7 +29,7 @@ Element* supprimerSupport(Element *tete, int id) {
     return tete;
 }
 
-Element* chercherSupport(Element *tete, int id) {
+Element* rechercherSupport(Element *tete, int id) {
     while (tete != NULL) {
         if (tete->support.id == id)
             return tete;

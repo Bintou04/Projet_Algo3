@@ -10,7 +10,7 @@ typedef struct Element {
 
 Element* ajouterSupport(Element *tete, Support s);
 Element* supprimerSupport(Element *tete, int id);
-Element* chercherSupport(Element *tete, int id);
+Element* rechercherSupport(Element *tete, int id);
 void afficherSupports(Element *tete);
 
 #endif
