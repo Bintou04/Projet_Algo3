@@ -1,128 +1,135 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sqlite3.h>
+
 #include "database.h"
+#include "support.h"
+#include "list.h"
 
-/* Connexion globale Mysql */
-MYSQL *conn;
+/* connexion SQLite globale */
+sqlite3 *db;
 
-/* Connexion sur la base de donne Mysql */
+/* tête de liste (définie dans list.c ou main.c) */
+extern Element *tete;
+
+/*
+   Connexion à la base
+ */
 int connectDatabase() {
-    conn = mysql_init(NULL);
-
-    if (conn == NULL) {
-        printf("MySQL initialization failed\n");
+    int rc = sqlite3_open("support.db", &db);
+    if (rc != SQLITE_OK) {
+        printf("Erreur ouverture SQLite : %s\n", sqlite3_errmsg(db));
         return 0;
     }
-
-    if (mysql_real_connect(
-            conn,
-            "localhost",
-            "root",
-            "",
-            "cours_supports",
-            0,
-            NULL,
-            0) == NULL) {
-
-        printf("Database connection failed: %s\n", mysql_error(conn));
-        mysql_close(conn);
-        return 0;
-    }
-
-    printf("Connected to database successfully\n");
     return 1;
 }
 
-/* fermeture de la connexion */
+/*
+   Fermeture de la base
+ */
 void closeDatabase() {
-    if (conn != NULL) {
-        mysql_close(conn);
-        conn = NULL;
+    if (db != NULL) {
+        sqlite3_close(db);
+        db = NULL;
     }
 }
 
-/* changer le support de la base de donner dans la liste lier */
-int loadSupportsFromDB(Node **head) {
-    MYSQL_RES *res;
-    MYSQL_ROW row;
+/*
+   Charger les supports
+ */
+int loadSupportsFromDB() {
+    const char *sql = "SELECT * FROM support;";
+    sqlite3_stmt *stmt;
 
-    if (mysql_query(conn, "SELECT * FROM support")) {
-        printf("SELECT failed: %s\n", mysql_error(conn));
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
+        printf("Erreur SELECT : %s\n", sqlite3_errmsg(db));
         return 0;
     }
 
-    res = mysql_store_result(conn);
-    if (res == NULL) {
-        printf("Result error: %s\n", mysql_error(conn));
-        return 0;
-    }
-
-    while ((row = mysql_fetch_row(res))) {
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
         Support s;
 
-        s.id = atoi(row[0]);
-        strcpy(s.title, row[1]);
-        strcpy(s.module, row[2]);
-        strcpy(s.type, row[3]);
-        strcpy(s.teacher, row[4]);
-        strcpy(s.path, row[5]);
-        strcpy(s.date_added, row[6]);
+        s.id = sqlite3_column_int(stmt, 0);
 
-        insertAtEnd(head, s);  // fonction  a partir de  list.c
+        strcpy(s.titre,      (const char *)sqlite3_column_text(stmt, 1));
+        strcpy(s.module,     (const char *)sqlite3_column_text(stmt, 2));
+        strcpy(s.type,       (const char *)sqlite3_column_text(stmt, 3));
+        strcpy(s.enseignant, (const char *)sqlite3_column_text(stmt, 4));
+        strcpy(s.chemin,     (const char *)sqlite3_column_text(stmt, 5));
+
+        /* ajout dans la liste */
+        tete = ajouterSupport(tete, s);
     }
 
-    mysql_free_result(res);
+    sqlite3_finalize(stmt);
     return 1;
 }
 
-/* Inserer un support dans la base de donne */
+/*
+   Insertion d'un support
+ */
 int insertSupportToDB(Support s) {
-    char query[1024];
+    const char *sql =
+        "INSERT INTO support(titre, module, type, enseignant, chemin) "
+        "VALUES (?, ?, ?, ?, ?);";
 
-    sprintf(query,
-        "INSERT INTO support (title, module, type, teacher, path, date_added) "
-        "VALUES ('%s', '%s', '%s', '%s', '%s', '%s')",
-        s.title, s.module, s.type, s.teacher, s.path, s.date_added
-    );
+    sqlite3_stmt *stmt;
 
-    if (mysql_query(conn, query)) {
-        printf("Insert failed: %s\n", mysql_error(conn));
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK) {
+        printf("Erreur INSERT : %s\n", sqlite3_errmsg(db));
         return 0;
     }
 
-    return 1;
+    sqlite3_bind_text(stmt, 1, s.titre, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, s.module, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 3, s.type, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 4, s.enseignant, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 5, s.chemin, -1, SQLITE_STATIC);
+
+    int rc = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+
+    return rc == SQLITE_DONE;
 }
 
-/* supprimer un support de la base de donnees */
+/*
+   Suppression d'un support
+ */
 int deleteSupportFromDB(int id) {
-    char query[256];
+    const char *sql = "DELETE FROM support WHERE id = ?;";
+    sqlite3_stmt *stmt;
 
-    sprintf(query, "DELETE FROM support WHERE id=%d", id);
+    sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    sqlite3_bind_int(stmt, 1, id);
 
-    if (mysql_query(conn, query)) {
-        printf("Delete failed: %s\n", mysql_error(conn));
-        return 0;
-    }
+    int rc = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
 
-    return 1;
+    return rc == SQLITE_DONE;
 }
 
-/* mis a jour d'un support dans la base de donnees */
+/*
+   Mise à jour d'un support
+ */
 int updateSupportInDB(Support s) {
-    char query[1024];
+    const char *sql =
+        "UPDATE support SET titre=?, module=?, type=?, enseignant=?, chemin=? "
+        "WHERE id=?;";
 
-    sprintf(query,
-        "UPDATE support SET title='%s', module='%s', type='%s', "
-        "teacher='%s', path='%s', date_added='%s' WHERE id=%d",
-        s.title, s.module, s.type,
-        s.teacher, s.path, s.date_added, s.id
-    );
+    sqlite3_stmt *stmt;
 
-    if (mysql_query(conn, query)) {
-        printf("Update failed: %s\n", mysql_error(conn));
-        return 0;
-    }
+    sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
 
-    return 1;
+    sqlite3_bind_text(stmt, 1, s.titre, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, s.module, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 3, s.type, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 4, s.enseignant, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 5, s.chemin, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 6, s.id);
+
+    int rc = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+
+    return rc == SQLITE_DONE;
 }
