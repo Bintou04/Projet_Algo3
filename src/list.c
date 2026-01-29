@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "list.h"
+Element *tete = NULL;
 
 Element* ajouterSupport(Element *tete, Support s) {
     Element *nouveau = malloc(sizeof(Element));

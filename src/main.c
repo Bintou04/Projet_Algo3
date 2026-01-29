@@ -3,12 +3,16 @@
 #include "list.h"
 #include "pile.h"
 #include "file.h"
+#include "gui.h"
 
-int main() {
+int main(int argc, char *argv[]) {
     Element *liste = NULL;
     int choix;
     Support s;
     int idRecherche;
+
+   
+    lancerGUI(argc, argv, &liste);
 
     do {
         printf("\n====================================== MENU ===================================================\n");
@@ -76,3 +80,15 @@ int main() {
 // executable
 // gcc src/main.c src/list.c src/pile.c src/file.c -Iinclude -o test_algo
 // 0
+
+
+
+
+
+// compilation GTK 
+
+/*
+gcc src/*.c -Iinclude $(pkg-config --cflags --libs gtk+-3.0) -lsqlite3 -o projet_gui
+
+./projet_gui.exe
+*/

@@ -3,10 +3,13 @@
 
 #include "support.h"
 
+
 typedef struct Element {
     Support support;
     struct Element *suivant;
 } Element;
+// mdp
+extern Element*tete;
 
 Element* ajouterSupport(Element *tete, Support s);
 Element* supprimerSupport(Element *tete, int id);
