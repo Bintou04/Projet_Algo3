@@ -1,0 +1,125 @@
+Gestion des Supports de Cours
+
+Module : Algorithmique et Programmation 3
+Année universitaire : 2025 – 2026
+Réalisé par :
+•	Mamadou Aliou Barry
+•	Fatou Bintou Seck
+•	Couro Mariam Wane 
+Encadré par :
+Dr Ndoye
+
+
+
+
+
+
+ 
+1. Introduction
+Dans le cadre du module Algorithmique et Programmation 3, ce projet consiste à développer une application complète en langage C permettant la gestion des supports de cours tels que les documents PDF, présentations PPT, vidéos et autres ressources pédagogiques. Ce projet vise à mettre en pratique les concepts avancés d’algorithmique, notamment la manipulation des structures de données dynamiques, la gestion de la mémoire, le développement modulaire en langage C, ainsi que l’utilisation d’une interface graphique et d’une base de données SQL. 
+2. Objectifs pédagogiques
+À travers ce projet, les objectifs pédagogiques suivants ont été visés :
+•	Manipuler les structures de données dynamiques (listes chaînées, piles et files)
+•	Implémenter une organisation modulaire en C (.c / .h)
+•	Gérer correctement la mémoire dynamique (malloc, realloc, free)
+•	Communiquer avec une base de données SQL 
+•	Développer une interface graphique en C avec GTK
+•	Travailler en équipe et utiliser GitHub pour le versioning
+•	Présenter oralement un projet informatique structuré
+3. Analyse fonctionnelle du système
+
+
+3.1 Fonctionnalités principales
+L’application permet à l’utilisateur de :
+•	Ajouter un support de cours
+•	Modifier un support existant
+•	Supprimer un support
+•	Visualiser la liste des supports
+•	Filtrer les supports par module, enseignant ou type
+•	Rechercher un support par mot-clé
+
+
+
+
+
+3.2 Définition d’un support de cours
+Un support de cours est caractérisé par les attributs suivants :
+•	id_support
+•	titre
+•	module
+•	type (PDF, PPT, Vidéo, Note, Livre, etc.)
+•	enseignant
+•	chemin_fichier
+•	date_ajout
+
+4. Structures de données utilisées
+4.1 Liste chaînée
+Une liste chaînée est utilisée pour stocker les supports chargés depuis la base de données. Les opérations implémentées sont :
+•	insertion en tête
+•	insertion en fin
+•	suppression par identifiant
+•	parcours de la liste
+•	recherche d’un support
+•	chargement depuis la base de données vers la liste
+•	sauvegarde de la liste vers la base de données
+
+4.2 Pile
+Une pile a été utilisée pour gérer l’historique des consultations des supports.
+Chaque consultation empile le support consulté, permettant ainsi de conserver un historique.
+4.3 File
+Une file est utilisée pour gérer les notifications, par exemple lors de l’ajout ou de la modification d’un support.
+5. Interface graphique
+L’application dispose d’une interface graphique développée avec GTK4, permettant une utilisation intuitive.
+5.1 Menu général
+•	Gestion des supports
+•	Historiques
+•	Notifications
+•	Quitter
+5.2 Fenêtre de gestion des supports
+•	Formulaire d’ajout de support
+•	Table d’affichage des supports
+•	Boutons : Ajouter, Modifier, Supprimer, Actualiser
+5.3 Fenêtre de détails d’un support
+•	Affichage des informations du support
+•	Bouton « Ouvrir fichier »
+Un thème visuel cohérent a été appliqué pour améliorer l’ergonomie.
+
+6. Base de données SQL
+La persistance des données est assurée par une base de données SQL.
+6.1 Table supports
+La table utilisée est définie comme suit :
+•	id INTEGER PRIMARY KEY AUTOINCREMENT
+•	titre TEXT
+•	module TEXT
+•	type TEXT
+•	enseignant TEXT
+•	chemin TEXT
+•	date_ajout TEXT
+Les données sont chargées depuis la base vers les structures en mémoire et sauvegardées inversement.
+
+7. Architecture du projet
+Le projet est organisé de manière modulaire :
+•	main.c : point d’entrée du programme
+•	support.c / support.h : gestion des supports
+•	list.c / list.h : implémentation de la liste chaînée
+•	stack.c / stack.h : implémentation de la pile
+•	queue.c / queue.h : implémentation de la file
+•	database.c / database.h : communication avec la base SQL
+•	gui.c : interface graphique GTK
+8. Répartition des tâches
+Membre	Tâches principales
+ALIOU BARRY 	Structures de données (liste, pile, file)
+FATOU BINTOU	Base de données SQL et logique métier
+COURO
+WANE	Interface graphique GTK et intégration GitHub
+
+9. Difficultés rencontrées
+Les principales difficultés rencontrées sont :
+•	la gestion manuelle de la mémoire en langage C
+•	l’implémentation correcte des structures dynamiques
+•	la communication avec la base de données SQL
+•	le développement de l’interface graphique GTK
+•	la coordination du travail via GitHub
+10. Conclusion et perspectives
+Ce projet a permis de consolider nos compétences en algorithmique avancée, en programmation C et en conception d’applications complètes. Il nous a également permis de mieux comprendre l’importance d’une architecture modulaire et d’une gestion rigoureuse de la mémoire.
+
