@@ -91,4 +91,8 @@ int main(int argc, char *argv[]) {
 gcc src/*.c -Iinclude $(pkg-config --cflags --libs gtk+-3.0) -lsqlite3 -o projet_gui
 
 ./projet_gui.exe
+
+
+gcc src/*.c -Iinclude $(pkg-config --cflags --libs gtk+-3.0) -lsqlite3 -o projet_gui
+
 */
